@@ -65,7 +65,7 @@ class ProjectContributorFlows(FlowDataSource):
             GROUP BY node
             ORDER BY ${rank_expr} ASC
             """).substitute(self.expressions)
-        d = psql.read_sql(sql, connection, params=self.params)
+        d = psql.read_sql(sql, self.connection, params=self.params)
 #         d.sort('rank', ascending=False)
         nodes = list(d.node.values)
         nodes.remove('Other')
@@ -85,7 +85,7 @@ class ProjectContributorFlows(FlowDataSource):
             AND last_date < %(last_date)s::date
             GROUP BY step, node
             """).substitute(self.expressions)
-        d = psql.read_sql(sql, connection, params=self.params)
+        d = psql.read_sql(sql, self.connection, params=self.params)
         return d.set_index(['step', 'node'])
 
     # returns a DataFrame[step1, node1, step2, node2; size]
@@ -120,7 +120,7 @@ class ProjectContributorFlows(FlowDataSource):
             WHERE t1.uid=t2.uid
             GROUP BY t1.step, t1.node, t2.step, t2.node
             """).substitute(self.expressions)
-        d = psql.read_sql(sql, connection, params=self.params)
+        d = psql.read_sql(sql, self.connection, params=self.params)
         return d.set_index(['step1', 'node1', 'step2', 'node2'])
 
 # ========
